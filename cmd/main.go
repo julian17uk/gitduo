@@ -4,9 +4,57 @@ import (
 	"fmt"
 	"os"
 	"log"
+//	"encoding/json"
 	"io/ioutil"
 	"../internal/utils"
+	"os/user"
 )
+
+var gitDuoConfigLocation = ".ssh"
+var gitDuoConfigFile = "gitduo.json"
+
+
+type Handler interface {
+}
+
+func HandlerFunc() {
+
+}
+
+
+func initialiseUserData() (userData utils.UserData) {
+	user, err := user.Current()
+	originaldir, err := os.Getwd()
+	err = os.Chdir(user.HomeDir)
+	err = os.Chdir(gitDuoConfigLocation)
+	dir, err := os.Getwd()
+	fmt.Print(dir)
+
+	fmt.Println()
+	dir, err = os.Getwd()
+	fmt.Print(dir)
+	file, err := ioutil.ReadFile(gitDuoConfigFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Print(string(file))
+
+	var h utils.UserData
+
+	//_ = json.Unmarshal([]byte(file), &h)
+
+	h.Userdata.Main.Name = "juliankarnik"
+	h.Userdata.Main.Email = "julian.karnik@ecs-digital.co.uk"
+	h.Userdata.Main.Username = "julian17uk"
+	h.Userdata.Main.Host = "github.com"
+	h.Userdata.Work.Name = "juliankarnik-work"
+	h.Userdata.Work.Email = "julian.karnik@ecs.co.uk"
+	h.Userdata.Work.Username = "julian19uk"
+	h.Userdata.Work.Host = "github-work"
+
+	err = os.Chdir(originaldir)
+	return h
+}
 
 func main() {
 	argCount := len(os.Args)
@@ -18,6 +66,10 @@ func main() {
 	argsWithoutProg := os.Args[1:]
 	arg := os.Args[1]
 	workingrepo := utils.Repocheck()
+
+
+	h := initialiseUserData()
+	fmt.Println("Value of Work.Email in struct h: " + h.Userdata.Work.Email)
 
 	fmt.Println(argsWithoutProg)
 	fmt.Println(arg)
@@ -50,7 +102,7 @@ func main() {
 
 	switch arg {
 	case "which":
-		utils.Which()
+		h.Which()
 	case "help":
 		utils.Help()
 	case "main":
@@ -66,24 +118,6 @@ func main() {
 	
 }
 
-
-
-
-
-func helpOLD() {
-	file, err := os.Open("doc.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	b, err := ioutil.ReadAll(file)
-	fmt.Print(string(b))
-}
 
 
 
