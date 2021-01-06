@@ -1,0 +1,13 @@
+{ "Main":
+        { "Name": "FirstUserName",
+          "Email": "FirstUser@email.com",
+          "Username": "FirstUserGitHubName",
+          "Host": "github.com"
+        },
+  "Work":
+        { "Name": "SecondUserName",
+          "Email": "SecondUser@email.com",
+          "Username": "SecondUserGitHubName",
+          "Host": "github-work"
+        }
+}

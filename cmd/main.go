@@ -3,99 +3,53 @@ package main
 import (
 	"fmt"
 	"os"
-	"log"
-//	"encoding/json"
-	"io/ioutil"
 	"../internal/utils"
-	"os/user"
 )
 
-var gitDuoConfigLocation = ".ssh"
-var gitDuoConfigFile = "gitduo.json"
+var PersonalAccessTokenDirectory = "/.ssh"
+var PersonalAccessTokenFileName = "gittoken"
+var ConfUserDataDirectory = "/.ssh"
+var ConfUserDataFileName = "gitconf"
 
-
-type Handler interface {
-}
-
-func HandlerFunc() {
-
-}
-
-
-func initialiseUserData() (userData utils.UserData) {
-	user, err := user.Current()
-	originaldir, err := os.Getwd()
-	err = os.Chdir(user.HomeDir)
-	err = os.Chdir(gitDuoConfigLocation)
-	dir, err := os.Getwd()
-	fmt.Print(dir)
-
-	fmt.Println()
-	dir, err = os.Getwd()
-	fmt.Print(dir)
-	file, err := ioutil.ReadFile(gitDuoConfigFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Print(string(file))
-
-	var h utils.UserData
-
-	//_ = json.Unmarshal([]byte(file), &h)
-
-	h.Userdata.Main.Name = "juliankarnik"
-	h.Userdata.Main.Email = "julian.karnik@ecs-digital.co.uk"
-	h.Userdata.Main.Username = "julian17uk"
-	h.Userdata.Main.Host = "github.com"
-	h.Userdata.Work.Name = "juliankarnik-work"
-	h.Userdata.Work.Email = "julian.karnik@ecs.co.uk"
-	h.Userdata.Work.Username = "julian19uk"
-	h.Userdata.Work.Host = "github-work"
-
-	err = os.Chdir(originaldir)
-	return h
+func initialiseFiles() utils.Files {
+	var f utils.Files
+	f.TokenDir = PersonalAccessTokenDirectory
+	f.TokenFileName = PersonalAccessTokenFileName
+	f.ConfDir = ConfUserDataDirectory
+	f.ConfFileName = ConfUserDataFileName
+	return f
 }
 
 func main() {
 	argCount := len(os.Args)
 	if argCount == 1 {
-		fmt.Println("No valid arguments")
-	
+		fmt.Println("no valid arguments please see help")
 		return
 	}
-	argsWithoutProg := os.Args[1:]
 	arg := os.Args[1]
 	workingrepo := utils.Repocheck()
+	filedata := initialiseFiles()
+	h := utils.Handler(filedata)
 
-
-	h := initialiseUserData()
-	fmt.Println("Value of Work.Email in struct h: " + h.Userdata.Work.Email)
-
-	fmt.Println(argsWithoutProg)
-	fmt.Println(arg)
+	if arg == "help" {
+		utils.Help()
+		return
+	}
 
 	if workingrepo == false {
 		if arg == "set" {
 			if argCount == 2 {
-				fmt.Println("Not valid arguments for set command, expecting boolean 1 = private, 0 = public")
-				utils.Help()
+				fmt.Println("invalid arguments for set command, expecting boolean 1 = private, 0 = public")
 				return
 			}
 			if os.Args[2] == "1" {
-				utils.Set(true)
+				h.SetRepo(true)
 			} else if os.Args[2] == "0" {
-				utils.Set(false)
+				h.SetRepo(false)
 			}	
 			return	
 		} else {
-			switch arg {
-				case "which": fmt.Println("Not inside a working git directory")
-				case "main": fmt.Println("Not inside a working git directory")
-				case "work": fmt.Println("Not inside a working git directory")
-				case "help": 
-				default: fmt.Println("Not a valid command")
-			}
-			utils.Help()
+			fmt.Println("not inside a working git directory")
 			return
 		}
 	}
@@ -103,19 +57,19 @@ func main() {
 	switch arg {
 	case "which":
 		h.Which()
-	case "help":
-		utils.Help()
 	case "main":
-		utils.Mainfunc()
+		a := h.InitialiseActiveUser("main")
+		a.SetUser()
 	case "work":
-		utils.Work()
+		a := h.InitialiseActiveUser("work")
+		a.SetUser()
+	case "pat":
+		fmt.Println("Personal access token:" + h.GetToken())
 	case "set":
-		fmt.Println("Command not valid inside a working git directory")
+		fmt.Println("set not valid inside a working git directory")
 	default:
-		fmt.Println("Not a valid command")
-//		utils.Help()
+		fmt.Println("not a valid command please see help")
 	}
-	
 }
 
 
