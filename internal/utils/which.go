@@ -2,22 +2,19 @@ package utils
 
 import(
 	"fmt"
-	"os/exec"
+	// "os/exec"
 	"regexp"
-	"bytes"
+	// "bytes"
 )
 
 func (h *Handle) Which() {
-	cmd := exec.Command("git", "remote", "-v")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
+	out, err := h.Runner.Run("git", "remote", "-v")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	regex, err := regexp.Compile(`\@(.*?)\:`)
-	result := regex.Find([]byte(out.String()))
+	result := regex.Find(out)
 	sz := len(result)
 	result = result[:sz-1]
 	result = result[1:]

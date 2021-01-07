@@ -1,10 +1,7 @@
 package utils
 
 import(
-	"os"
-	"bytes"
 	"strings"
-	"os/exec"
 	"fmt"
 )
 
@@ -20,17 +17,13 @@ func (h *Handle)CreateRemoteRepo(reponame string, private bool) (string, error) 
 	input := `{"name":"` + reponame + `","private":` + privateflag + `}`
 	user := username+":"+ h.Token
 
-	cmd := exec.Command("curl", "-i", "-u", user, gitapiurl, "-d", input)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	out, err := h.Runner.Run("curl", "-i", "-u", user, gitapiurl, "-d", input)
 	if err != nil {
 		fmt.Println(err)
 		return result, err
 	}
-	s := out.String()
-	if n := strings.IndexByte(out.String(), '\n'); n >=0 {
+	s := string(out)
+	if n := strings.IndexByte(s, '\n'); n >=0 {
 		result = s[:n]
 	} else {
 		result = s
@@ -42,14 +35,12 @@ func (h *Handle)populateRemoteRepo(reponame string) error {
 	host := h.Conf.Main.Host
 	username := h.Conf.Main.Username
 	ssh := "git@" + host + ":" + username + "/" + reponame + ".git"
-
-	cmd := exec.Command("git", "remote", "add", "origin", ssh)
-	err := cmd.Run()
+	
+	_, err := h.Runner.Run("git", "remote", "add", "origin", ssh)
 	if err != nil {
 		return err
 	}
-	cmd = exec.Command("git", "push", "--set-upstream", "origin", "master")
-	err = cmd.Run()
+	_, err = h.Runner.Run("git", "push", "--set-upstream", "origin", "master")
 	if err != nil {
 		return err
 	}

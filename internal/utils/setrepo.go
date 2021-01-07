@@ -2,7 +2,6 @@ package utils
 
 import(
 	"fmt"
-	"os/exec"
 	"io/ioutil"
 )
 
@@ -21,7 +20,7 @@ func (h *Handle) SetRepo(private bool) string {
 	}
 	h.Token = token
 
-	err := localGitSetup()
+	err := h.localGitSetup()
 	if err != nil {
 		fmt.Println(err)
 		return ""
@@ -43,27 +42,21 @@ func (h *Handle) SetRepo(private bool) string {
 	return result
 }
 
-func localGitSetup() error {
-	cmd := exec.Command("touch", "README.md")
-	err := cmd.Run()
+func (h *Handle)localGitSetup() error {
+	_, err := h.Runner.Run("touch", "README.md")
 	if err != nil {
 		return err
 	}
 
-	cmd = exec.Command("git", "init")
-	err = cmd.Run()
+	_, err = h.Runner.Run("git", "init")
 	if err != nil {
 		return err
 	}
-
-	cmd = exec.Command("git", "add", "README.md")
-	err = cmd.Run()
+	_, err = h.Runner.Run("git", "add", "README.md")
 	if err != nil {
 		return err
 	}
-
-	cmd = exec.Command("git", "commit", "-m", "first commit")
-	err = cmd.Run()
+	_, err = h.Runner.Run("git", "commit", "-m", "first commit")
 	if err != nil {
 		return err
 	}

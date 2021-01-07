@@ -7,6 +7,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"encoding/json"
+	"os/exec"
 )
 
 type Conf struct {
@@ -42,17 +43,29 @@ type Handle struct {
 	Conf 	Conf
 	Files	Files
 	Token	string
+	Runner  Runner
 }
 
-func Handler(f Files) (*Handle) {
+type RealRunner struct{}
+
+type Runner interface {
+	Run(string, ...string) ([]byte, error)
+}
+
+func (r RealRunner) Run(command string, args ...string) ([]byte, error) {
+	out, err := exec.Command(command, args...).Output()
+	return out, err
+}
+
+func Handler(f Files, r Runner) (*Handle) {
 	var h Handle
 	h.Conf = GetConf(f)
 	h.Files = f
-
+	h.Runner = r
 	return &h
 }
 
-func (h *Handle)InitialiseActiveUser(name string) (*ActiveUser) {
+func (h *Handle)InitialiseActiveUser(name string) (ActiveUser) {
 	var a ActiveUser
 	switch name {
 	case "work":
@@ -66,7 +79,7 @@ func (h *Handle)InitialiseActiveUser(name string) (*ActiveUser) {
 		a.Host = h.Conf.Main.Host
 		a.Username = h.Conf.Main.Username
 	}
-	return &a
+	return a
 }
 
 
