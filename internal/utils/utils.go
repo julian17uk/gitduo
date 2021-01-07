@@ -57,12 +57,16 @@ func (r RealRunner) Run(command string, args ...string) ([]byte, error) {
 	return out, err
 }
 
-func Handler(f Files, r Runner) (*Handle) {
+func Handler(f Files, r Runner) (*Handle, error) {
 	var h Handle
-	h.Conf = GetConf(f)
+	c, err := GetConf(f)
+	if err != nil {
+		return &h, err
+	}
+	h.Conf = c
 	h.Files = f
 	h.Runner = r
-	return &h
+	return &h, nil
 }
 
 func (h *Handle)InitialiseActiveUser(name string) (ActiveUser) {
@@ -109,7 +113,7 @@ func (h *Handle)GetToken() string{
 	}
 }
 
-func GetConf(f Files) (Conf) {
+func GetConf(f Files) (Conf, error) {
 	var c Conf
 
 	usr, _ := user.Current()
@@ -117,22 +121,34 @@ func GetConf(f Files) (Conf) {
 	err := os.Chdir(usr.HomeDir + f.ConfDir)
 	if err != nil {
 		fmt.Println(err)
-		return c
+		fmt.Println("Expecting file " + f.ConfFileName + " in directory " + f.ConfDir + "P lease set README.md for details")
+		return c, err
 	}
 
 	if _, err = os.Stat(f.ConfFileName); os.IsNotExist(err) {
-		err = os.Chdir(originaldir)
+		_ = os.Chdir(originaldir)
 		fmt.Println("Error: Conf file missing")
-		return c
+		fmt.Println("Expecting file " + f.ConfFileName + " in directory ~" + f.ConfDir + " Please set README.md for details")
+		return c, err
+
 	} else {
 		b, err := ioutil.ReadFile(f.ConfFileName)
 		if err != nil {
 			fmt.Println(err)
-			return c
+			return c, err
 		}
 		err = os.Chdir(originaldir)
+		if err != nil {
+			return c, err
+		}
 
-		json.Unmarshal(b, &c)
-		return c
+		err = json.Unmarshal(b, &c)
+		if err != nil {
+			fmt.Println("Error: " + f.ConfFileName + " unexpected format")
+			fmt.Println("For expected format see gitconf.sample")
+			var c1 Conf
+			return c1, err
+		}
+		return c, nil
 	}
 }

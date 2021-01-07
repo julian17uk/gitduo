@@ -20,7 +20,6 @@ func TestSetRepoNoErrorOnOutput(t *testing.T) {
 	h := testutils.CreateTestHandler(testRunner)
 	a := utils.ActiveUser{ "john", "john@email.com", "john1", "github.com"}
 
-
 	out := testutils.CaptureOutput(func() { h.SetUser(a) })
 	out = strings.TrimSuffix(out, "\n")
 	out = strings.TrimSpace(out)

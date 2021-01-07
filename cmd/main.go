@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"../internal/utils"
 )
@@ -24,9 +23,12 @@ func main() {
 	command, paramcount, params := utils.FilterArgs(os.Args[1:])
 	filedata := initialiseFiles()
 	runner := utils.RealRunner{}
-	h := utils.Handler(filedata, runner)
+	h, err := utils.Handler(filedata, runner)
+	if err != nil {
+		return
+	}
 
-	h.handleFunc(command, paramcount, params)
+	h.HandleFunc(command, paramcount, params)
 }
 
 
