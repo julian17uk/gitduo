@@ -89,3 +89,14 @@ $gitduo work
 Or create a new repository from sratch in an empty directory with the following  
 $gitduo set 1  (for a private github repo)  
 $gitduo set 0  (for a public github repo)
+
+#### Testing
+
+Go to the test directory  
+$cd test
+
+Each test file is of the format xxx_test.go. This may be run individual  
+$go test xxx_test.go  
+
+Or run all tests at once  
+$go test -v
