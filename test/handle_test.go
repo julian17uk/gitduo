@@ -4,7 +4,6 @@ import (
 	"testing"
 	"../internal/testutils"
 	"strings"
-
 )
 
 type TestRunnerRepoCheckOK struct{}
@@ -39,12 +38,12 @@ func TestHandleFuncRepoOK(t *testing.T) {
 		{ "main", 7, params, "Too many arguments" },
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		out := testutils.CaptureOutput(func() { h.HandleFunc(test.command, test.paramcount, test.params) })
 		out = strings.TrimSuffix(out, "\n")
 		out = strings.TrimSpace(out)
 		if out != test.expectedOutput {
-			t.Errorf("Find test failed, expected output %v, actual output %v ", test.expectedOutput, out)
+			t.Errorf("Find test %v failed, expected output %v, actual output %v ", i, test.expectedOutput, out)
 		}
 	}
 }
@@ -61,17 +60,17 @@ func TestHandleFuncRepoNotOK(t *testing.T) {
 	}{
 		{ "invalid", 0, params, "not a valid command please see help" },
 		{ "set", 0, params, "invalid arguments for set command, expecting boolean 1 = private, 0 = public" },
-		{ "which", 4, params, "Too many arguments" },
+		{ "which", 2, params, "Too many arguments" },
 		{ "set", 1, params, "set not valid inside a working git directory" },
 		{ "main", 7, params, "Too many arguments" },
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		out := testutils.CaptureOutput(func() { h.HandleFunc(test.command, test.paramcount, test.params) })
 		out = strings.TrimSuffix(out, "\n")
 		out = strings.TrimSpace(out)
 		if out != test.expectedOutput {
-			t.Errorf("Find test failed, expected output %v, actual output %v ", test.expectedOutput, out)
+			t.Errorf("Find test %v failed, expected output %v, actual output %v ", i, test.expectedOutput, out)
 		}
 	}	
 }

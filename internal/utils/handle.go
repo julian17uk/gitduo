@@ -44,6 +44,7 @@ func (h *Handle)HandleFunc(command string, paramcount int, params []string) {
 		} else {
 			if Find(repoCommands, command) {
 				fmt.Println("not inside a working git directory")
+				return
 			}
 		}
 	}

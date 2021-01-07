@@ -10,13 +10,6 @@ import (
 	"io"
 )
 
-type TestRunner struct{}
-
-func (r TestRunner) Run(command string, args ...string) ([]byte, error) {
-	out := []byte(`ok`)
-	return out, nil
-}
-
 func CaptureOutput(f func()) string {
 	reader, writer, err := os.Pipe()
 	if err != nil {

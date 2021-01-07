@@ -95,7 +95,7 @@ $gitduo set 0  (for a public github repo)
 Go to the test directory  
 $cd test
 
-Each test file is of the format xxx_test.go. This may be run individual  
+Each test file is of the format xxx_test.go. This may be run individually  
 $go test xxx_test.go  
 
 Or run all tests at once  
