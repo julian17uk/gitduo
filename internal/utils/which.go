@@ -2,9 +2,7 @@ package utils
 
 import(
 	"fmt"
-	// "os/exec"
 	"regexp"
-	// "bytes"
 )
 
 func (h *Handle) Which() {

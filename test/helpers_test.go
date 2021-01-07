@@ -5,7 +5,6 @@ import (
 	"../internal/utils"
 )
 
-
 func TestFind(t *testing.T) {
 	validCommands := []string{"help", "which", "main", "work", "set", "pat"}
 	
@@ -61,11 +60,3 @@ func TestFilterArgs(t *testing.T) {
 	}
 }
 
-// func InputRequest(inputname string) string {
-// 	fmt.Println("Please enter a name for the " + inputname + ":")
-// 	reader := bufio.NewReader(os.Stdin)
-// 	input, _ := reader.ReadString('\n')
-// 	input = strings.TrimSuffix(input, "\n")
-// 	input = strings.TrimSpace(input)
-// 	return input
-// }

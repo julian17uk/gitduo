@@ -5,7 +5,6 @@ import (
 	"../internal/testutils"
 	"../internal/utils"
 	"strings"
-
 )
 
 type TestRunnerSetUser struct{}

@@ -17,14 +17,6 @@ func (r TestRunner) Run(command string, args ...string) ([]byte, error) {
 	return out, nil
 }
 
-// func CaptureOutput(f func()) string {
-// 	var buf bytes.Buffer
-// 	log.SetOutput(&buf)
-// 	f()
-// 	log.SetOutput(os.Stderr)
-// 	return buf.String()
-// }
-
 func CaptureOutput(f func()) string {
 	reader, writer, err := os.Pipe()
 	if err != nil {

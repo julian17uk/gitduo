@@ -4,9 +4,7 @@ import (
 	"testing"
 	"../internal/testutils"
 	"strings"
-
 )
-
 
 type TestRunnerWhich struct{}
 
