@@ -27,7 +27,8 @@ In a non Git working directory:
 
     set     initailize a repository in an empty location and provisions it on github. This takes 1 arg of value 1 for private and 0 for public
 			(example gitduo set 1)`
-			
+    
+
 func Help() {
 	fmt.Println(usage)
 }
@@ -67,4 +68,30 @@ func InputRequest(inputname string) string {
 	input = strings.TrimSuffix(input, "\n")
 	input = strings.TrimSpace(input)
 	return input
+}
+
+
+func FilterArgs(args []string) (string, int, []string) {
+    var command string
+    var paramcount int
+    var params []string
+
+    if len(args) == 0 {
+        return command, paramcount, params
+    }
+    command = args[0]
+    if len(args) != 1 {
+        paramcount = len(args[1:])
+        params = args[1:]
+    }
+    return command, paramcount, params
+}
+
+func Find(validCommands []string, command string) bool {
+    for _, value := range validCommands {
+        if value == command {
+            return true
+        }
+    } 
+    return false
 }

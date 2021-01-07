@@ -20,56 +20,76 @@ func initialiseFiles() utils.Files {
 	return f
 }
 
+
 func main() {
-	argCount := len(os.Args)
-	if argCount == 1 {
-		fmt.Println("no valid arguments please see help")
-		return
-	}
-	arg := os.Args[1]
+	validCommands := []string{"help", "which", "main", "work", "set", "pat"}
+	repoCommands := []string{"which", "main", "work"}
+	command, paramcount, params := utils.FilterArgs(os.Args[1:])
 	workingrepo := utils.Repocheck()
 	filedata := initialiseFiles()
 	h := utils.Handler(filedata)
 
-	if arg == "help" {
-		utils.Help()
+	if !utils.Find(validCommands, command) {
+		fmt.Println("not a valid command please see help")
 		return
 	}
 
-	if workingrepo == false {
-		if arg == "set" {
-			if argCount == 2 {
-				fmt.Println("invalid arguments for set command, expecting boolean 1 = private, 0 = public")
+	if paramcount == 0 {
+		switch command {
+		case "pat":
+			fmt.Println("Personal access token:" + h.GetToken())
+			return
+		case "help":
+			utils.Help()
+			return
+		case "set":
+			fmt.Println("invalid arguments for set command, expecting boolean 1 = private, 0 = public")
+			return
+		}
+
+		if workingrepo == true {
+			switch command {
+			case "which":
+				h.Which()
+				return
+			case "main":
+				a := h.InitialiseActiveUser("main")
+				a.SetUser()
+				return
+			case "work":
+				a := h.InitialiseActiveUser("work")
+				a.SetUser()
 				return
 			}
-			if os.Args[2] == "1" {
-				h.SetRepo(true)
-			} else if os.Args[2] == "0" {
-				h.SetRepo(false)
-			}	
-			return	
 		} else {
-			fmt.Println("not inside a working git directory")
-			return
+			if utils.Find(repoCommands, command) {
+				fmt.Println("not inside a working git directory")
+			}
+		}
+	}
+	
+	if paramcount == 1 {
+		if workingrepo == true {
+			if command == "set" {
+				fmt.Println("set not valid inside a working git directory")
+				return
+			}
+		} else {
+			if command == "set" {
+				switch params[0] {
+				case "0":
+					h.SetRepo(false)
+				case "1":
+					h.SetRepo(true)
+				default:
+					fmt.Println("invalid arguments for set command, expecting boolean 1 = private, 0 = public")
+				}
+				return	 
+			}
 		}
 	}
 
-	switch arg {
-	case "which":
-		h.Which()
-	case "main":
-		a := h.InitialiseActiveUser("main")
-		a.SetUser()
-	case "work":
-		a := h.InitialiseActiveUser("work")
-		a.SetUser()
-	case "pat":
-		fmt.Println("Personal access token:" + h.GetToken())
-	case "set":
-		fmt.Println("set not valid inside a working git directory")
-	default:
-		fmt.Println("not a valid command please see help")
-	}
+	fmt.Println("Too many arguments")
 }
 
 
