@@ -37,13 +37,13 @@ func TestInitialiseActiveUser(t *testing.T) {
 			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Name, test.expected.Name)
 		}
 		if actual.Email != test.expected.Email {
-			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Name, test.expected.Name)
+			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Email, test.expected.Email)
 		}
 		if actual.Username != test.expected.Username {
-			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Name, test.expected.Name)
+			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Username, test.expected.Username)
 		}
 		if actual.Host != test.expected.Host {
-			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Name, test.expected.Name)
+			t.Errorf("Initialise active user failed, found %v, expected %v", actual.Host, test.expected.Host)
 		}
 	}
 }
