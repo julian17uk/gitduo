@@ -21,6 +21,7 @@ $gitduo help
 
 This required a unix terminal to operate the CLI  
 Golang is required  
+Git is required
 Two working github accounts are needed to operate with SSH key pairs, not HTTPS  
 A GitHub Personal Access Token is needed for repository creation.
 
